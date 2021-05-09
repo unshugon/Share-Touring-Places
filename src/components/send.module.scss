@@ -1,0 +1,9 @@
+.putImage {
+    display: none;
+}
+.selectImage, .submit{
+    &:hover{
+        color: green;
+        cursor: pointer;
+    }
+}

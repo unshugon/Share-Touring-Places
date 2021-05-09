@@ -13,6 +13,7 @@ class Print extends React.Component {
         if(change.type === 'added'){
           const li = document.createElement("li");
           const img = document.createElement("img");
+          const div = document.createElement("div");
           const storageRef = storage.ref();
           const imageRef = storageRef.child(`images/${change.doc.data().place}.png`);
 
@@ -44,8 +45,10 @@ class Print extends React.Component {
             });
 
             li.textContent = change.doc.data().place;
-            printPlaces.appendChild(li);
-            printPlaces.appendChild(img);
+
+            div.appendChild(img);
+            div.appendChild(li);
+            printPlaces.prepend(div);
         };
       });
     });

@@ -7,8 +7,8 @@ class Send extends React.Component {
     super(props);
     this.state = {
       place: "", 
-      image: "", 
-      progress: ""
+      image: "",
+      progress: "画像を選択"
     }
   };
 
@@ -34,21 +34,50 @@ class Send extends React.Component {
         return;
       };
 
-      places.add({
-        place: putPlace.value, 
-        created: firebase.firestore.FieldValue.serverTimestamp()
-      })
-      .then(doc => {
-        putPlace.value = "";
-        putPlace.focus();
-      })
-      .catch(error => {
-        console.log(error);
-      });
+      this.setState({progress: "アップロード中..."});
+      const doneUpload = () => {this.setState({progress: "画像を選択"})};
 
       let imageRef = firebase.storage().ref().child(`images/${this.state.place}.png`);
-      imageRef.put(this.state.image);
+      const uploadTask = imageRef.put(this.state.image);
+
+      uploadTask.on('state_changed', snapshot =>{
+        // Observe state change events such as progress, pause, and resume
+        // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        console.log('Upload is ' + progress + '% done');
+        switch (snapshot.state) {
+          case firebase.storage.TaskState.PAUSED: // or 'paused'
+            console.log('Upload is paused');
+            break;
+          case firebase.storage.TaskState.RUNNING: // or 'running'
+            console.log('Upload is running');
+            break;
+
+          default:
+            break;
+        };
+      }, function (error) {
+        console.log(error);
+      }, function () {
+        doneUpload();
+        // Handle successful uploads on complete
+        uploadTask.snapshot.ref.getDownloadURL().then(downloadURL => {
+          console.log('File available at', downloadURL);
+          places.add({
+            place: putPlace.value, 
+            created: firebase.firestore.FieldValue.serverTimestamp()
+          })
+          .then(() => {
+            putPlace.value = "";
+            putPlace.focus();
+          })
+          .catch(error => {
+            console.log(error);
+          })
+        });
+      });
     };
+
   return(
       <div>
         位置情報
@@ -58,17 +87,17 @@ class Send extends React.Component {
           value={this.state.place}
           onChange={(event) => {handleFormChange(event)}}
           />
+          <br/>
           <label htmlFor="putImage" className={sendStyle.selectImage}>
-            <br/>
-            画像を選択
-            <br/>
-            <input
-            id="putImage"
-            className={sendStyle.putImage}
-            type="file"
-            onChange={(event) => handleImage(event)}
-            />
+            {this.state.progress}
           </label>
+          <input
+          id="putImage"
+          className={sendStyle.putImage}
+          type="file"
+          onChange={(event) => handleImage(event)}
+          />
+          <br/>
           <button className={sendStyle.submit}>送信</button>
         </form>
       </div>

@@ -1,9 +1,12 @@
 .putImage {
     display: none;
 }
-.selectImage, .submit{
+.selectImage, .submit {
+    margin: 8px;
+    padding: 5px;
+    background-color: green;
     &:hover{
-        color: green;
+        color: blue;
         cursor: pointer;
     }
 }

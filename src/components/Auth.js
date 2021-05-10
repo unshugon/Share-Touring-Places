@@ -1,15 +1,9 @@
 import React from 'react';
-import firebase, {providerTwitter} from "../Firebase";
+import firebase from "../Firebase";
 
 class Auth extends React.Component{
   handleLogin = () => {
-    firebase.auth().signInWithPopup(providerTwitter)
-    .then(res => {
-      console.log(res);
-      //TODO: ex. storeに送信, DB保存,...
-    }).catch(error => {
-      console.log(error);
-    });
+      loginWithTwitter();
   };
 
   handleLogout = () => {

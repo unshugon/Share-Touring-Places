@@ -1,15 +1,62 @@
-ul {
-  list-style: none;
-  padding-left: 0;
-  div {
-    border: 2px, solid, white;
-    max-width: 25vw;
+$pc: 681px; // PC
+$tab: 680px; // タブレット
+$sp: 480px;  // スマホ
+
+@mixin pc {
+  @media (min-width: ($pc)) {
+    @content;
   }
 }
-img {
-  max-width: 25vw;
-  max-height: 80vw;
+@mixin tab {
+  @media (max-width: ($tab)) {
+    @content;
+  }
+}
+@mixin sp {
+  @media (max-width: ($sp)) {
+    @content;
+  }
+}
+
+.container {
+  min-height: 80vw;
+}
+.printPlaces {
+  list-style: none;
+  padding-left: 0;
+  display: flex;
+  flex-wrap: wrap;
+  div {
+    border: 1px solid white;
+    margin: 5px auto;
+    @include pc {
+      width: 25vw;
+      height: 35vw;
+    };
+    @include tab {
+      width: 80vw;
+    };
+    @include sp {
+      width: 90vw;
+    };
+    img {
+      @include pc{
+        max-width: 99%;
+        max-height: 99%;
+      };
+      @include tab {
+        max-width: 99%;
+        max-height: 99%;
+      };
+      @include sp {
+        max-width: 99%;
+        max-height: 99%;
+      };
+    }
+
+  }
 }
 .title{
   color: aquamarine;
+  font-family: system-ui;
 }

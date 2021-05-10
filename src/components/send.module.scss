@@ -1,12 +1,63 @@
-.putImage {
-    display: none;
+$pc: 681px; // PC
+$tab: 680px; // タブレット
+$sp: 480px;  // スマホ
+
+@mixin pc {
+  @media (min-width: ($pc)) {
+    @content;
+  }
 }
-.selectImage, .submit {
-    margin: 8px;
-    padding: 5px;
-    background-color: green;
-    &:hover{
-        color: blue;
-        cursor: pointer;
-    }
+@mixin tab {
+  @media (max-width: ($tab)) {
+    @content;
+  }
+}
+@mixin sp {
+  @media (max-width: ($sp)) {
+    @content;
+  }
+}
+
+.container {
+  border: 2px solid white;
+  font-family: system-ui;
+  display: inline-block;
+  @include pc {
+    width: 25vw;
+  };
+  @include tab {
+    width: 80vw;
+  };
+  @include sp {
+    width: 90vw;
+  }
+}
+.putImage, .submit{
+  display: none;
+}
+.putPlace {
+  text-align: left;
+  padding: 10px;
+  margin-bottom: 5px;
+  line-height: 1.5;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  box-shadow: 1px 1px 1px #999;
+  height: 1rem;
+  font-size: .8rem;
+  letter-spacing: 1px;
+  resize: none;
+  overflow: hidden;
+}
+.putImageLabel, .submitLabel {
+  display: inline-block;
+  margin: 5px auto;
+  padding: 5px;
+  background-color: rgb(125,187,68);
+  border: 1px solid white;
+  border-radius: 2px;
+  &:hover{
+      color: blue;
+      cursor: pointer;
+  }
 }

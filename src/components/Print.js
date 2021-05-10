@@ -54,9 +54,9 @@ class Print extends React.Component {
     });
 
     return(
-      <div>
+      <div className={printStyle.container}>
         <h2 className={printStyle.title}>ツーリングスポット一覧</h2>
-        <ul id="printPlaces"></ul>
+        <ul id="printPlaces" className={printStyle.printPlaces}></ul>
       </div>
     );
   };

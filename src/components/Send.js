@@ -79,16 +79,18 @@ class Send extends React.Component {
     };
 
   return(
-      <div>
-        位置情報
+      <div className={sendStyle.container}>
+        おすすめスポットを投稿
         <form onSubmit={onSubmit}>
           <textarea
           id="putPlace"
+          className={sendStyle.putPlace}
           value={this.state.place}
           onChange={(event) => {handleFormChange(event)}}
+          placeholder="地名を入力..."
           />
           <br/>
-          <label htmlFor="putImage" className={sendStyle.selectImage}>
+          <label htmlFor="putImage" className={sendStyle.putImageLabel}>
             {this.state.progress}
           </label>
           <input
@@ -98,7 +100,8 @@ class Send extends React.Component {
           onChange={(event) => handleImage(event)}
           />
           <br/>
-          <button className={sendStyle.submit}>送信</button>
+          <label htmlFor="submit" className={sendStyle.submitLabel}>投稿</label>
+          <button id="submit" className={sendStyle.submit}></button>
         </form>
       </div>
     );

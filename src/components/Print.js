@@ -12,14 +12,15 @@ class Print extends React.Component {
       snapshot.docChanges().forEach((change) => {
         if(change.type === 'added'){
           const li = document.createElement("li");
+          const p = document.createElement("p");
           const img = document.createElement("img");
           const div = document.createElement("div");
           const storageRef = storage.ref();
-          const imageRef = storageRef.child(`images/${change.doc.data().place}.png`);
+          const imageRef = storageRef.child(`images/${change.doc.data().place}_${change.doc.data().description}.jpg`);
 
           imageRef.getDownloadURL()
-            .then((url) => {
-              img.src = url;
+            .then((uri) => {
+              img.src = uri;
             })
             .catch((error) => {
               switch (error.code) {
@@ -45,9 +46,11 @@ class Print extends React.Component {
             });
 
             li.textContent = change.doc.data().place;
+            p.textContent = change.doc.data().description;
 
             div.appendChild(img);
             div.appendChild(li);
+            div.appendChild(p);
             printPlaces.prepend(div);
         };
       });

@@ -1,33 +1,48 @@
 import React from "react";
 import firebase, {places} from "../../src/Firebase";
 import sendStyle from "./send.module.scss";
+import loadImage from 'blueimp-load-image';
 
 class Send extends React.Component {
   constructor(props){
     super(props);
     this.state = {
-      place: "", 
-      image: "",
-      progress: "画像を選択"
+      place: "",
+      description: "",
+      image: null,
+      progress: "画像を選択", 
+      blob: null
     }
   };
 
+  handleChangeFile = async (event) => {
+    const { files } = event.target;
+    const canvas = await loadImage(files[0], {
+      maxWidth: 450,
+      canvas: true,
+    });
+    canvas.image.toBlob((blob) => {
+      this.setState({blob: blob});
+    }, files[0].type);
+  };
+
+  handleFormChange = (event) => {
+    const inputValue = event.target.value;
+    this.setState({place: inputValue});
+  };
+
+  handleDescChange = (event) => {
+    const inputValue = event.target.value;
+    this.setState({description: inputValue});
+  };
+
   render() {
-    const handleFormChange = (event) => {
-      const inputValue = event.target.value;
-      this.setState({place: inputValue});
-    };
-
-    const handleImage = (event) => {
-      const inputImage = event.target.files[0];
-      this.setState({image: inputImage});
-    };
-
     const putPlace = document.getElementById("putPlace");
+    const putDescription = document.getElementById("putDescription");
     const putImage = document.getElementById("putImage");
     
-    const onSubmit = (e) => {
-      e.preventDefault();
+    const onSubmit = (event) => {
+      event.preventDefault();
 
       if(putPlace.value === "" || putImage.value === ""){
         putPlace.focus();
@@ -37,8 +52,8 @@ class Send extends React.Component {
       this.setState({progress: "アップロード中..."});
       const doneUpload = () => {this.setState({progress: "画像を選択"})};
 
-      let imageRef = firebase.storage().ref().child(`images/${this.state.place}.png`);
-      const uploadTask = imageRef.put(this.state.image);
+      let imageRef = firebase.storage().ref().child(`images/${this.state.place}_${this.state.description}.jpg`);
+      const uploadTask = imageRef.put(this.state.blob);
 
       uploadTask.on('state_changed', snapshot =>{
         // Observe state change events such as progress, pause, and resume
@@ -61,14 +76,15 @@ class Send extends React.Component {
       }, function () {
         doneUpload();
         // Handle successful uploads on complete
-        uploadTask.snapshot.ref.getDownloadURL().then(downloadURL => {
-          console.log('File available at', downloadURL);
+        uploadTask.snapshot.ref.getDownloadURL().then(() => {
           places.add({
-            place: putPlace.value, 
+            place: putPlace.value,
+            description: putDescription.value,
             created: firebase.firestore.FieldValue.serverTimestamp()
           })
           .then(() => {
             putPlace.value = "";
+            putDescription.value = "";
             putPlace.focus();
           })
           .catch(error => {
@@ -86,8 +102,16 @@ class Send extends React.Component {
           id="putPlace"
           className={sendStyle.putPlace}
           value={this.state.place}
-          onChange={(event) => {handleFormChange(event)}}
+          onChange={(event) => this.handleFormChange(event)}
           placeholder="地名を入力..."
+          />
+          <br/>
+          <textarea
+          id="putDescription"
+          className={sendStyle.putDescription}
+          value={this.state.description}
+          onChange={(event) => this.handleDescChange(event)}
+          placeholder="おすすめポイントを入力..."
           />
           <br/>
           <label htmlFor="putImage" className={sendStyle.putImageLabel}>
@@ -97,7 +121,8 @@ class Send extends React.Component {
           id="putImage"
           className={sendStyle.putImage}
           type="file"
-          onChange={(event) => handleImage(event)}
+          accept="image/*"
+          onChange={(event) => this.handleChangeFile(event)}
           />
           <br/>
           <label htmlFor="submit" className={sendStyle.submitLabel}>投稿</label>

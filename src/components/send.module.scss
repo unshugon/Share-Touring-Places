@@ -35,7 +35,7 @@ $sp: 480px;  // スマホ
 .putImage, .submit{
   display: none;
 }
-.putPlace {
+.putPlace{
   text-align: left;
   padding: 10px;
   margin-bottom: 5px;
@@ -48,6 +48,10 @@ $sp: 480px;  // スマホ
   letter-spacing: 1px;
   resize: none;
   overflow: hidden;
+}
+.putDescription {
+  @extend .putPlace;
+  height: 2rem;
 }
 .putImageLabel, .submitLabel {
   display: inline-block;

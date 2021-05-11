@@ -19,7 +19,7 @@ $sp: 480px;  // スマホ
 }
 
 .container {
-  min-height: 80vw;
+  min-height: 75vw;
 }
 .printPlaces {
   list-style: none;
@@ -30,8 +30,8 @@ $sp: 480px;  // スマホ
     border: 1px solid white;
     margin: 5px auto;
     @include pc {
-      width: 25vw;
-      height: 35vw;
+      max-width: 24vw;
+      max-height: 35vw;
     };
     @include tab {
       width: 80vw;
@@ -52,8 +52,14 @@ $sp: 480px;  // スマホ
         max-width: 99%;
         max-height: 99%;
       };
-    }
-
+    };
+    li {
+      font-size: 1rem;
+      border-bottom: 1px solid white;
+    };
+    p {
+      font-size: .8rem;
+    };
   }
 }
 .title{

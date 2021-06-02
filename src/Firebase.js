@@ -12,5 +12,7 @@ firebase.auth().languageCode = "it";
 export const db = firebase.firestore();
 export const places = db.collection('places');
 export const storage = firebase.storage();
-export const providerTwitter = firebase.auth.TwitterAuthProvider();
+export const auth = firebase.auth();
+export const providerTwitter = new firebase.auth.TwitterAuthProvider();
+export let user = firebase.auth().currentUser;
 export default firebase;

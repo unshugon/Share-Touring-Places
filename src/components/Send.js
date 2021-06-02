@@ -11,7 +11,7 @@ class Send extends React.Component {
       description: "",
       image: null,
       progress: "画像を選択", 
-      blob: null
+      blob: null,
     }
   };
 
@@ -43,6 +43,7 @@ class Send extends React.Component {
     
     const onSubmit = (event) => {
       event.preventDefault();
+      const user = this.props.user;
 
       if(putPlace.value === "" || putImage.value === ""){
         putPlace.focus();
@@ -80,7 +81,8 @@ class Send extends React.Component {
           places.add({
             place: putPlace.value,
             description: putDescription.value,
-            created: firebase.firestore.FieldValue.serverTimestamp()
+            created: firebase.firestore.FieldValue.serverTimestamp(),
+            user: user
           })
           .then(() => {
             putPlace.value = "";
@@ -99,30 +101,30 @@ class Send extends React.Component {
         おすすめスポットを投稿
         <form onSubmit={onSubmit}>
           <textarea
-          id="putPlace"
-          className={sendStyle.putPlace}
-          value={this.state.place}
-          onChange={(event) => this.handleFormChange(event)}
-          placeholder="地名を入力..."
+            id="putPlace"
+            className={sendStyle.putPlace}
+            value={this.state.place}
+            onChange={(event) => this.handleFormChange(event)}
+            placeholder="地名を入力..."
           />
           <br/>
           <textarea
-          id="putDescription"
-          className={sendStyle.putDescription}
-          value={this.state.description}
-          onChange={(event) => this.handleDescChange(event)}
-          placeholder="おすすめポイントを入力..."
+            id="putDescription"
+            className={sendStyle.putDescription}
+            value={this.state.description}
+            onChange={(event) => this.handleDescChange(event)}
+            placeholder="おすすめポイントを入力..."
           />
           <br/>
           <label htmlFor="putImage" className={sendStyle.putImageLabel}>
             {this.state.progress}
           </label>
           <input
-          id="putImage"
-          className={sendStyle.putImage}
-          type="file"
-          accept="image/*"
-          onChange={(event) => this.handleChangeFile(event)}
+            id="putImage"
+            className={sendStyle.putImage}
+            type="file"
+            accept="image/*"
+            onChange={(event) => this.handleChangeFile(event)}
           />
           <br/>
           <label htmlFor="submit" className={sendStyle.submitLabel}>投稿</label>

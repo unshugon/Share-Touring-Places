@@ -20,6 +20,7 @@ $sp: 480px;  // スマホ
 
 .container {
   min-height: 75vw;
+  min-width: 100vw;
 }
 .printPlaces {
   list-style: none;
@@ -30,7 +31,7 @@ $sp: 480px;  // スマホ
     border: 1px solid white;
     margin: 5px auto;
     @include pc {
-      max-width: 24vw;
+      width: (95vw/4);
       max-height: 35vw;
     };
     @include tab {
@@ -40,9 +41,11 @@ $sp: 480px;  // スマホ
       width: 90vw;
     };
     img {
+      padding: 5px 5px 5px 5px;
+
       @include pc{
         max-width: 99%;
-        max-height: 99%;
+        max-height: 80%;
       };
       @include tab {
         max-width: 99%;

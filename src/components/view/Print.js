@@ -1,5 +1,5 @@
 import React from "react";
-import {db, storage} from "../../src/Firebase";
+import {db, storage} from "../../Firebase";
 import printStyle from "./print.module.scss";
 
 class Print extends React.Component {

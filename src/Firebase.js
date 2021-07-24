@@ -7,7 +7,7 @@ import {firebaseConfig} from "./firebaseConfig";
 
 firebase.initializeApp(firebaseConfig);
 firebase.analytics();
-firebase.auth().languageCode = "it";
+firebase.auth().languageCode = "ja";
 
 export const db = firebase.firestore();
 export const places = db.collection('places');

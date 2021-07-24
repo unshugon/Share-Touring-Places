@@ -1,71 +1,62 @@
 import React from 'react';
-import firebase, {auth, providerTwitter} from "../Firebase";
-import authStyle from "./auth.module.scss";
-import { faTwitter } from "@fortawesome/free-brands-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Redirect } from 'react-router-dom';
+import firebase from '../Firebase';
+import { Spinner } from 'react-bootstrap';
+import homeStyle from './view/home.module.scss';
 
-class Auth extends React.Component{
-  constructor(props){
-    super(props);
-  };
+class Auth extends React.Component {
 
-  handleLoginAnonymous = () => {
-    let user = firebase.auth().currentUser;
-    auth.signInAnonymously();
-    this.props.updateState({isLogged: true, user: user});
-  };
+    state = {
+        signinCheck: false, //ログインチェックが完了してるか
+        signedIn: false, //ログインしてるか
+    }
 
-  handleLoginTwitter = () => {
-    let currentUser = firebase.auth().currentUser;
+    componentDidMount = () => {
+        //ログインしてるかどうかチェック
+        firebase.auth().onAuthStateChanged(user => {
+            if (user) {
+                //してる
+                this.setState({
+                    signinCheck: true,
+                    signedIn: true,
+                });
+            } else {
+                //してない
+                this.setState({
+                    signinCheck: true,
+                    signedIn: false,
+                });
+            }
+        })
+    }
 
-    firebase.auth().languageCode = 'ja';
+    render() {
+        //チェックが終わってないなら（ローディング表示）
+        if (!this.state.signinCheck) {
+            return (
+            <div>
+                <span variant="primary" disabled className={homeStyle.loading}>
+                    <Spinner
+                    as="span"
+                    animation="border"
+                    role="status"
+                    aria-hidden="true"
+                    />
+                    <span className={homeStyle.loadingLetter}>Loading...</span>
+                </span>
+            </div>
+            );
+        }
 
-    auth
-    .signInWithPopup(providerTwitter)
-    .then((result) => {
-      /** @type {firebase.auth.OAuthCredential} */
-      
-      this.props.updateState({isLogged: true, user: currentUser});
-    }).catch((error) => {
-      console.log(error);
-    });
-  }
-
-  handleLogout = () => {
-    auth.signOut().then(() => {
-      console.log("success sign out");
-    }).catch((error) => {
-      console.log(error);
-    });
-    this.props.updateState({isLogged: false});
-  };
-
-  render(){
-    let loginAnonymous;
-    let loginTwitter;
-    let logout;
-    let user = this.props.isLogged;
-
-    if (this.props.isLogged) {
-      loginAnonymous = null;
-      loginTwitter = null;
-      logout = <button onClick={this.handleLogout} id="logout">Logout</button>;
-      console.log(user);
-    } else {
-      loginAnonymous = <button onClick={this.handleLoginAnonymous} id="login" className={authStyle.login}>Login</button>;
-      loginTwitter = <button onClick={this.handleLoginTwitter} id = "loginTwitter" className={`${authStyle.twitter} ${authStyle.login}`}><FontAwesomeIcon icon={faTwitter} className={authStyle.twitter} />Login with Twitter</button>
-      logout = null;
-      console.log(user);
-    };
-    
-    return(
-      <div>
-        {loginAnonymous}
-        {loginTwitter}
-        {logout}
-      </div>
-    );
-  }
-};
+        //チェックが終わりかつ
+        if (this.state.signedIn) {
+            //サインインしてるとき（そのまま表示）
+            return this.props.children;
+        } else {
+            //してないとき（ログイン画面にリダイレクト）
+            return <Redirect to="/login" />
+        }
+    }
+}
 
 export default Auth;

@@ -1,7 +1,7 @@
 import React from "react";
-import firebase, {places} from "../../src/Firebase";
+import firebase, { places, auth } from "../../Firebase";
 import sendStyle from "./send.module.scss";
-import loadImage from 'blueimp-load-image';
+import loadImage from "blueimp-load-image";
 
 class Send extends React.Component {
   constructor(props){
@@ -10,7 +10,6 @@ class Send extends React.Component {
       place: "",
       description: "",
       image: null,
-      progress: "画像を選択", 
       blob: null,
     }
   };
@@ -24,6 +23,9 @@ class Send extends React.Component {
     canvas.image.toBlob((blob) => {
       this.setState({blob: blob});
     }, files[0].type);
+    if (this.state.blob != null) {
+
+    }
   };
 
   handleFormChange = (event) => {
@@ -36,36 +38,39 @@ class Send extends React.Component {
     this.setState({description: inputValue});
   };
 
+  handleUpload = (tOrF) => {
+    return this.props.handleUpload(tOrF);
+  }
+
   render() {
     const putPlace = document.getElementById("putPlace");
     const putDescription = document.getElementById("putDescription");
     const putImage = document.getElementById("putImage");
-    
+    const homeState = this.props;
+
     const onSubmit = (event) => {
       event.preventDefault();
-      const user = this.props.user;
+      const doneUpload = () => this.handleUpload(false);
+      const startUpload = () => this.handleUpload(true);
 
       if(putPlace.value === "" || putImage.value === ""){
         putPlace.focus();
         return;
       };
 
-      this.setState({progress: "アップロード中..."});
-      const doneUpload = () => {this.setState({progress: "画像を選択"})};
+      startUpload();
 
       let imageRef = firebase.storage().ref().child(`images/${this.state.place}_${this.state.description}.jpg`);
       const uploadTask = imageRef.put(this.state.blob);
 
       uploadTask.on('state_changed', snapshot =>{
-        // Observe state change events such as progress, pause, and resume
-        // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
         const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
         console.log('Upload is ' + progress + '% done');
         switch (snapshot.state) {
-          case firebase.storage.TaskState.PAUSED: // or 'paused'
+          case firebase.storage.TaskState.PAUSED:
             console.log('Upload is paused');
             break;
-          case firebase.storage.TaskState.RUNNING: // or 'running'
+          case firebase.storage.TaskState.RUNNING:
             console.log('Upload is running');
             break;
 
@@ -76,13 +81,12 @@ class Send extends React.Component {
         console.log(error);
       }, function () {
         doneUpload();
-        // Handle successful uploads on complete
         uploadTask.snapshot.ref.getDownloadURL().then(() => {
           places.add({
             place: putPlace.value,
             description: putDescription.value,
             created: firebase.firestore.FieldValue.serverTimestamp(),
-            user: user
+            user: auth.currentUser.uid
           })
           .then(() => {
             putPlace.value = "";
@@ -117,7 +121,7 @@ class Send extends React.Component {
           />
           <br/>
           <label htmlFor="putImage" className={sendStyle.putImageLabel}>
-            {this.state.progress}
+            {this.state.blob == null ? '画像を選択' : '画像を変更'}
           </label>
           <input
             id="putImage"
@@ -127,7 +131,9 @@ class Send extends React.Component {
             onChange={(event) => this.handleChangeFile(event)}
           />
           <br/>
-          <label htmlFor="submit" className={sendStyle.submitLabel}>投稿</label>
+          <label htmlFor="submit" className={sendStyle.submitLabel}>
+            {homeState.progress ? 'Uploading...' : '投稿'}
+          </label>
           <button id="submit" className={sendStyle.submit}></button>
         </form>
       </div>

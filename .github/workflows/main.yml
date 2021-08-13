@@ -1,8 +1,10 @@
 name: deploy_firebase_hosting
 on:
   push:
-    branches: [ main ]
-    paths: [ "build/**" ]
+    branches:
+      - main
+    paths:
+      - "build/**"
 jobs:
   deploy_firebase_hosting:
     runs-on: ubuntu-latest

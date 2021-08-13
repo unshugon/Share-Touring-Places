@@ -8,5 +8,7 @@ jobs:
     steps:
       - name: Checkout the repository
         uses: actions/checkout@main
+      - name: Install Firebase-tools
+        run: npm install -D firebase-tools
       - name: Deploy to Firebase
         run: npx firebase deploy --token=${{ secrets.FIREBASE_TOKEN }}

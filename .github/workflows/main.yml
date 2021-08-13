@@ -11,4 +11,4 @@ jobs:
       - name: Install Deploy tool
         run: npm install -D firebase-tools
       - name: Deploy to Firebase
-        run: npm deploy --token=1//0eR7hxwdp9F7uCgYIARAAGA4SNwF-L9IrGtK5F9Rov2gobrZS1eAJMkXQcEmxrLOk19wF3KjDR9Uq4QjPZ81Sflyu-a-OYuE9izY
+        run: npm deploy --token=${{ secres.FIREBASE_TOKEN }}
